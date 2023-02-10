@@ -31,10 +31,12 @@ private:
     
 
 private slots:
-    void setStyle();
-    void setNumDefStyle();
+    void setSignStyle();
+    void setNumStyle();
     void setDefaultSettings();
-    void setDefaultOutput();
+    void setOutputStyle();
+    void blockLetters();
+    void unblockLetters();
 
     void on_pushButton_0_clicked();
     void on_pushButton_1_clicked();

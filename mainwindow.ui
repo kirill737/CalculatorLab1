@@ -501,7 +501,7 @@ background-color: rgb(189, 187, 190);
       <x>130</x>
       <y>100</y>
       <width>41</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -566,7 +566,7 @@ background-color: rgb(189, 187, 190);
       <x>350</x>
       <y>100</y>
       <width>41</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">

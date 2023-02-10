@@ -208,12 +208,21 @@ QString numColorPressed = "border-radius: 20px;"
     "border: none;"; 
 QString numColorOff = "border-radius: 20px;"
     "background-color: #333333;"
+    // "background-color: #6E6C6F;"
     "color: #FEFEFE;"
     "border: none;"; 
+QString numColorBlocked = "border-radius: 20px;"
+    "background-color: #000000;"
+    "color: #6E6C6F;"
+    "border: 2px solid #6E6C6F;"; 
 QString operationColorOff = "border-radius: 20px;"
     "background-color: #A5A5A5;"
     "color: #000000;"
     "border: none;"; 
+QString operationColorBlocked = "border-radius: 20px;"
+    "border: 2px solid #A5A5A5;"
+    "background-color: #000000;"
+    "color: #A5A5A5;";
 QString operationColorPressed = "border-radius: 20px;"
     "background-color: #D9D9D9;"
     "color: #000000;"
@@ -221,7 +230,6 @@ QString operationColorPressed = "border-radius: 20px;"
 QString outputColor = "border-radius: 5px;"
     "background-color: #333333;"
     "color: #FFFFFF;"
-    "border-color: #333333;"
     "border-style: outset;";
 QString outputColorActive = "border-radius: 5px;"
     "background-color: #333333;"
@@ -231,13 +239,16 @@ QString outputColorActive = "border-radius: 5px;"
 QString signColor = "background-color: #000000;"
 "color: #FFFFFF;";
 void MainWindow::setDefaultSettings() {
+    vec.clear();
     vec.push_back(ui->plainTextEdit_Num1);
     vec.push_back(ui->plainTextEdit_System1);
     vec.push_back(ui->plainTextEdit_Num2);
     vec.push_back(ui->plainTextEdit_System2);
+    currentVecIndex = 0;
     currentPlainText = vec[currentVecIndex];
-    ui->pushButton_Left->setEnabled(false);
-    setStyle();
+    setSignStyle();
+    setNumStyle();
+    setOutputStyle();
 
     ui->label_Sign->setStyleSheet(signColor);
     ui->plainTextEdit_Answer->setStyleSheet(outputColor);
@@ -246,14 +257,18 @@ void MainWindow::setDefaultSettings() {
 
     ui->label->setAlignment(Qt::AlignCenter);
     ui->label_Sign->setAlignment(Qt::AlignCenter);
+
+    ui->pushButton_Left->setEnabled(false);
+    ui->pushButton_Left->setStyleSheet(operationColorBlocked);
+    ui->pushButton_Right->setEnabled(true);
 }
-void MainWindow::setDefaultOutput() {
+void MainWindow::setOutputStyle() {
     ui->plainTextEdit_Num1->setStyleSheet(outputColor);
     ui->plainTextEdit_Num2->setStyleSheet(outputColor);
     ui->plainTextEdit_System1->setStyleSheet(outputColor);
     ui->plainTextEdit_System2->setStyleSheet(outputColor);
 }
-void MainWindow::setNumDefStyle() {
+void MainWindow::setNumStyle() {
     ui->pushButton_0->setStyleSheet(numColorOff);
     ui->pushButton_1->setStyleSheet(numColorOff);
     ui->pushButton_2->setStyleSheet(numColorOff);
@@ -279,15 +294,43 @@ void MainWindow::setNumDefStyle() {
     ui->pushButton_Left->setStyleSheet(operationColorOff);
     ui->pushButton_Delete->setStyleSheet(operationColorOff);
 }
-void MainWindow::setStyle() {
+void MainWindow::setSignStyle() {
     this->setStyleSheet(mainWindowColor);
     ui->pushButton_Multiply->setStyleSheet(signColorOff);
     ui->pushButton_Division->setStyleSheet(signColorOff);
     ui->pushButton_Sub->setStyleSheet(signColorOff);
     ui->pushButton_Sum->setStyleSheet(signColorOff);
     ui->pushButton_Equal->setStyleSheet(signColorOff);
-    setNumDefStyle();
-    setDefaultOutput();
+}
+
+void MainWindow::blockLetters() {
+    ui->pushButton_A->setEnabled(false);
+    ui->pushButton_B->setEnabled(false);
+    ui->pushButton_C->setEnabled(false);
+    ui->pushButton_D->setEnabled(false);
+    ui->pushButton_E->setEnabled(false);
+    ui->pushButton_F->setEnabled(false);
+    ui->pushButton_A->setStyleSheet(numColorBlocked);
+    ui->pushButton_B->setStyleSheet(numColorBlocked);
+    ui->pushButton_C->setStyleSheet(numColorBlocked);
+    ui->pushButton_D->setStyleSheet(numColorBlocked);
+    ui->pushButton_E->setStyleSheet(numColorBlocked);
+    ui->pushButton_F->setStyleSheet(numColorBlocked);
+}
+void MainWindow::unblockLetters() {
+    ui->pushButton_A->setEnabled(true);
+    ui->pushButton_B->setEnabled(true);
+    ui->pushButton_C->setEnabled(true);
+    ui->pushButton_D->setEnabled(true);
+    ui->pushButton_E->setEnabled(true);
+    ui->pushButton_F->setEnabled(true);
+    ui->pushButton_A->setStyleSheet(numColorOff);
+    ui->pushButton_B->setStyleSheet(numColorOff);
+    ui->pushButton_C->setStyleSheet(numColorOff);
+    ui->pushButton_D->setStyleSheet(numColorOff);
+    ui->pushButton_E->setStyleSheet(numColorOff);
+    ui->pushButton_F->setStyleSheet(numColorOff);
+    setNumStyle();
 }
 
 void MainWindow::on_pushButton_Division_pressed() {
@@ -313,69 +356,51 @@ void MainWindow::on_pushButton_ClearAll_clicked() {
     ui->plainTextEdit_System2->setPlainText("");
     ui->label_Sign->setText("");
     ui->plainTextEdit_Answer->setPlainText("");
-    setNumDefStyle();
+    setDefaultSettings();
 };
 void MainWindow::on_pushButton_Right_clicked() {
-    if (currentVecIndex == 2) {
-        currentVecIndex++;
-        ui->pushButton_Right->setEnabled(false);
-    }
-    else currentVecIndex++;
+    currentVecIndex++;
+    ui->pushButton_Right->setStyleSheet(operationColorOff);
     currentPlainText = vec[currentVecIndex];
     ui->pushButton_Left->setEnabled(true);
-    if ((currentVecIndex == 0) || (currentVecIndex == 2)) {
-        ui->pushButton_A->setEnabled(true);
-        ui->pushButton_B->setEnabled(true);
-        ui->pushButton_C->setEnabled(true);
-        ui->pushButton_D->setEnabled(true);
-        ui->pushButton_E->setEnabled(true);
-        ui->pushButton_F->setEnabled(true);
-    } 
-    else {
-        ui->pushButton_A->setEnabled(false);
-        ui->pushButton_B->setEnabled(false);
-        ui->pushButton_C->setEnabled(false);
-        ui->pushButton_D->setEnabled(false);
-        ui->pushButton_E->setEnabled(false);
-        ui->pushButton_F->setEnabled(false);
-    }
-    setNumDefStyle();
-    setDefaultOutput();
+    ui->pushButton_Left->setStyleSheet(operationColorOff);
+    
+    if ((currentVecIndex == 1) || (currentVecIndex == 3)) blockLetters();
+    else unblockLetters();
+
+    setOutputStyle();
     currentPlainText->setStyleSheet(outputColorActive);
+
+    if (currentVecIndex == 3) {
+        ui->pushButton_Right->setEnabled(false);
+        ui->pushButton_Right->setStyleSheet(operationColorBlocked);
+    }
+    // setNumStyle();
+
 }
 void MainWindow::on_pushButton_Left_clicked() {
-    if (currentVecIndex == 1) {
-        currentVecIndex--;
-        ui->pushButton_Left->setEnabled(false);
-    }
-    else currentVecIndex--;
+    currentVecIndex--;
+    ui->pushButton_Left->setStyleSheet(operationColorOff);
     currentPlainText = vec[currentVecIndex];
     ui->pushButton_Right->setEnabled(true);
-    if ((currentVecIndex == 0) || (currentVecIndex == 2)) {
-        ui->pushButton_A->setEnabled(true);
-        ui->pushButton_B->setEnabled(true);
-        ui->pushButton_C->setEnabled(true);
-        ui->pushButton_D->setEnabled(true);
-        ui->pushButton_E->setEnabled(true);
-        ui->pushButton_F->setEnabled(true);
-    } 
-    else {
-        ui->pushButton_A->setEnabled(false);
-        ui->pushButton_B->setEnabled(false);
-        ui->pushButton_C->setEnabled(false);
-        ui->pushButton_D->setEnabled(false);
-        ui->pushButton_E->setEnabled(false);
-        ui->pushButton_F->setEnabled(false);
-    }
-    setNumDefStyle();
-    setDefaultOutput();
+    ui->pushButton_Right->setStyleSheet(operationColorOff);
+    
+    if ((currentVecIndex == 1) || (currentVecIndex == 3)) blockLetters();
+    else unblockLetters();
+
+    setOutputStyle();
     currentPlainText->setStyleSheet(outputColorActive);
+
+    if (currentVecIndex == 0) {
+        ui->pushButton_Left->setEnabled(false);
+        ui->pushButton_Left->setStyleSheet(operationColorBlocked);
+    }
 }
 void MainWindow::on_pushButton_Delete_clicked() {
     QString text = currentPlainText->toPlainText();
     text.resize(text.size() - 1);
     currentPlainText->setPlainText(text);   
-    setNumDefStyle();
+    setNumStyle();
 }
 
 void MainWindow::on_pushButton_ClearAll_pressed() {
@@ -394,111 +419,111 @@ void MainWindow::on_pushButton_Delete_pressed() {
 void MainWindow::on_pushButton_Division_clicked() {
     currentSign = "÷";
     ui->label_Sign->setText(currentSign);
-    setStyle();
+    setSignStyle();
     ui->pushButton_Division->setStyleSheet(signColorOn);
 };
 void MainWindow::on_pushButton_Multiply_clicked() {
     currentSign = "×";
     ui->label_Sign->setText(currentSign);
-    setStyle();
+    setSignStyle();
     ui->pushButton_Multiply->setStyleSheet(signColorOn);
 };
 void MainWindow::on_pushButton_Sum_clicked() {
     currentSign = "+";
     ui->label_Sign->setText(currentSign);
-    setStyle();
+    setSignStyle();
     ui->pushButton_Sum->setStyleSheet(signColorOn);
 };
 void MainWindow::on_pushButton_Sub_clicked() {
     currentSign = "−";
     ui->label_Sign->setText(currentSign);
-    setStyle();
+    setSignStyle();
     ui->pushButton_Sub->setStyleSheet(signColorOn);
 };
 void MainWindow::on_pushButton_Equal_clicked() {
-    setStyle();
+    setSignStyle();
     ui->plainTextEdit_Answer->setPlainText(Answer);
 };
 
 void MainWindow::on_pushButton_0_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "0");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_1_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "1");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_2_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "2");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_3_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "3");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_4_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "4");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_5_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "5");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_6_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "6");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_7_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "7");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_8_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "8");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_9_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "9");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_A_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "A");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_B_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "B");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_C_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "C");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_D_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "D");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_E_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "E");
-    setNumDefStyle();
+    setNumStyle();
 }
 void MainWindow::on_pushButton_F_clicked() {
     QString text = currentPlainText->toPlainText();
     currentPlainText->setPlainText(text + "F");
-    setNumDefStyle();
+    setNumStyle();
 }
 
 void MainWindow::on_pushButton_0_pressed() {
@@ -549,4 +574,3 @@ void MainWindow::on_pushButton_E_pressed() {
 void MainWindow::on_pushButton_F_pressed() {
     ui->pushButton_F->setStyleSheet(numColorPressed);
 }
-

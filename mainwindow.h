@@ -2,18 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <qsqldatabase.h>
-#include <qsqlquery.h>
-#include <qsqltablemodel.h>
-#include <QTableView>
-#include <QDebug>
+#include <QPlainTextEdit>
+#include <vector>
+#include <QPalette>
 #include <string>
-#include <QSqlQueryModel>
-#include <QSqlTableModel>
-#include <QSqlQueryModel>
-#include <QKeyEvent>
-#include <QMessageBox>
-#include <QStandardItemModel>
+#include <map>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,46 +18,93 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    /// @brief Конструктор, в котором происходит подключение и открытие базы данных, подготовка базы данных к работе и вывод базы данных с дефолтными параметрами фильтрации
     MainWindow(QWidget *parent = nullptr);
-    /// @brief Диструктор, в котором освобождается занятая память
     ~MainWindow();
 
 private:
-    /// @brief Поле, хранящее указатель на экземпляр, отвечающий за графический интерфейс приложения
     Ui::MainWindow *ui;
-    /// @brief Поле для настройки соединения с базой данных
-    QSqlDatabase db;
-    /// @brief Поле, хранящее указатель на экземпляр и предоставляющий средства для обработки операторов SQL и управления ими
-    QSqlQuery *query;
-    /// @brief Поле, хранящее указатель на экземпляр и предоставляющее модель данных, доступную только для чтения, для наборов результатов SQL
-    QSqlQueryModel *qmodel;
-    /// @brief ID аудитории на которую нажал пользователь 
-    int currentId;
-
-protected:
-    /// @brief Обработка нажатия клавиши "Enter" для вывода базы данных с установленными фильтрами
-    void keyPressEvent(QKeyEvent *e) override;
+    QPlainTextEdit *currentPlainText;
+    int currentVecIndex = 0;
+    QString currentSign;
+    std::string num1 = "", num2 = "";
+    int system1 = 0, system2 = 0;
+    std::vector<QPlainTextEdit*> vec;
+    
 
 private slots:
-    /// @brief Вывод базы данных с установленными  фильтрами
-    void applyFilters();
-    /// @brief Отчистка фильтров базы данных
-    void clearFilters();
-    /// @brief Вывод базы данных с установленными фильтрами после нажатия кнопки
-    void on_btnSetFilters_clicked();
-    /// @brief Обработка изменения значений слайдера
-    void on_sdrCapacity_valueChanged();
-    /// @brief Добавления аудитории c установленными параметрами
-    void on_btnAddAudit_clicked();
-    /// @brief Удаление выбранном аудитории из базы данных
-    void on_btnRemoveAudit_clicked();
-    /// @brief Подстановка параметров пользователя из полей в базу данных
-    void on_pushButtonSaveInfo_clicked();
-    /// @brief Вывод всех аудиторий из базы данных (отчищает филтр поиска)
-    void on_pushButtonShowAll_clicked();
-    /// @brief Обработка нажатий пользователя по таблице с аудиториями
-    void on_tableView_clicked(const QModelIndex &index);
-    
+    void Answer(int a, int b, std::string sign);
+
+    void setSignStyle();
+    void setNumStyle();
+    void setDefaultSettings();
+    void setOutputStyle();
+    void blockLetters();
+    void unblockLetters();
+    void setArrowsStatus();
+    void blockLeft();
+    void blockRight();
+    void unblockLeft();
+    void unblockRight();
+
+    void on_plainTextEdit_Num1_clicked();
+    void on_plainTextEdit_Num2_clicked();
+    void on_plainTextEdit_System1_clicked();
+    void on_plainTextEdit_System2_clicked();
+
+    void on_pushButton_0_clicked();
+    void on_pushButton_1_clicked();
+    void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_4_clicked();
+    void on_pushButton_5_clicked();
+    void on_pushButton_6_clicked();
+    void on_pushButton_7_clicked();
+    void on_pushButton_8_clicked();
+    void on_pushButton_9_clicked();
+    void on_pushButton_A_clicked();
+    void on_pushButton_B_clicked();
+    void on_pushButton_C_clicked();
+    void on_pushButton_D_clicked();
+    void on_pushButton_E_clicked();
+    void on_pushButton_F_clicked();
+
+    void on_pushButton_0_pressed();
+    void on_pushButton_1_pressed();
+    void on_pushButton_2_pressed();
+    void on_pushButton_3_pressed();
+    void on_pushButton_4_pressed();
+    void on_pushButton_5_pressed();
+    void on_pushButton_6_pressed();
+    void on_pushButton_7_pressed();
+    void on_pushButton_8_pressed();
+    void on_pushButton_9_pressed();
+    void on_pushButton_A_pressed();
+    void on_pushButton_B_pressed();
+    void on_pushButton_C_pressed();
+    void on_pushButton_D_pressed();
+    void on_pushButton_E_pressed();
+    void on_pushButton_F_pressed();
+
+    void on_pushButton_Right_clicked();
+    void on_pushButton_Left_clicked();
+    void on_pushButton_ClearAll_clicked();
+    void on_pushButton_Delete_clicked();
+
+    void on_pushButton_Right_pressed();
+    void on_pushButton_Left_pressed();
+    void on_pushButton_ClearAll_pressed();
+    void on_pushButton_Delete_pressed();
+
+    void on_pushButton_Division_clicked();
+    void on_pushButton_Multiply_clicked();
+    void on_pushButton_Sum_clicked();
+    void on_pushButton_Sub_clicked();
+    void on_pushButton_Equal_clicked();
+
+    void on_pushButton_Division_pressed();
+    void on_pushButton_Multiply_pressed();
+    void on_pushButton_Sum_pressed();
+    void on_pushButton_Sub_pressed();
+    void on_pushButton_Equal_pressed();    
 };
 #endif // MAINWINDOW_H

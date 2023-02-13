@@ -7,7 +7,7 @@
 #include <QPalette>
 #include <string>
 #include <map>
-
+#include <cmath>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,21 +18,19 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
-    QPlainTextEdit *currentPlainText;
+    Ui::MainWindow* ui;
+    QPlainTextEdit* currentPlainText;
     int currentVecIndex = 0;
-    QString currentSign;
-    std::string num1 = "", num2 = "";
-    int system1 = 0, system2 = 0;
+    QString currentSign = "";
     std::vector<QPlainTextEdit*> vec;
-    
+
 
 private slots:
-    void Answer(int a, int b, std::string sign);
+    void Answer(long long a, long long b, std::string sign);
 
     void setSignStyle();
     void setNumStyle();
@@ -95,6 +93,11 @@ private slots:
     void on_pushButton_ClearAll_pressed();
     void on_pushButton_Delete_pressed();
 
+    void on_plainTextEdit_Num1_selectionChanged();
+    void on_plainTextEdit_Num2_selectionChanged();
+    void on_plainTextEdit_System1_selectionChanged();
+    void on_plainTextEdit_System2_selectionChanged();
+
     void on_pushButton_Division_clicked();
     void on_pushButton_Multiply_clicked();
     void on_pushButton_Sum_clicked();
@@ -105,6 +108,6 @@ private slots:
     void on_pushButton_Multiply_pressed();
     void on_pushButton_Sum_pressed();
     void on_pushButton_Sub_pressed();
-    void on_pushButton_Equal_pressed();    
+    void on_pushButton_Equal_pressed();
 };
 #endif // MAINWINDOW_H

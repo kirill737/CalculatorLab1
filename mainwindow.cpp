@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-std::map<char, int> Alfabet(){
+std::map<char, int> Alfabet() {
     std::map<char, int> m;
     m['0'] = 0;
     m['1'] = 1;
@@ -22,7 +22,7 @@ std::map<char, int> Alfabet(){
     return m;
 };
 
-std::map<std::string, int> Signs(){
+std::map<std::string, int> Signs() {
     std::map<std::string, int> m;
     m["+"] = 1;
     m["−"] = 2;
@@ -35,7 +35,7 @@ static std::map<char, int> alfabet_ = std::move(Alfabet());
 static std::map<std::string, int> signs_ = std::move(Signs());
 
 QString answer_;
-void MainWindow::Answer(int a, int b, std::string sign) { //подсчет ответа
+void MainWindow::Answer(long long a, long long b, std::string sign) { //подсчет ответа
     switch (signs_[sign])
     {
     case 1:
@@ -48,7 +48,7 @@ void MainWindow::Answer(int a, int b, std::string sign) { //подсчет от�
         answer_ = QString::number(a * b);
         break;
     case 4:
-        answer_ = QString::number((double)a / (double)b); //здесь нужно округление до 3х знаков после запятой
+        answer_ = QString::number(round(((double)a / (double)b)*1000)/1000);
         break;
     default:
         break;
@@ -56,113 +56,43 @@ void MainWindow::Answer(int a, int b, std::string sign) { //подсчет от�
 }
 
 long long Pow(int a, int n) { //возведение в степень
-	if (n == 0) return 1;
-	if (n % 2 == 0)	
+    if (n == 0) return 1;
+    if (n % 2 == 0)
         return Pow((a * a), n / 2);
-	else
-		return (a * Pow(a, n - 1));
+    else
+        return (a * Pow(a, n - 1));
 }
 
 long long To_dec(std::string num, int sys) { //перевод в десятичную СС
-	long long res = 0;
-	for (int i = 0; i < num.length(); i++) {
-        if(num[num.length() - i - 1] != '0')
-		    res += alfabet_[num[num.length() - i - 1]] * Pow(sys, i);
-	}
-	return res;
+    long long res = 0;
+    for (int i = 0; i < num.length(); i++) {
+        if (num[num.length() - i - 1] != '0')
+            res += alfabet_[num[num.length() - i - 1]] * Pow(sys, i);
+    }
+    return res;
 }
 
-bool Sys_check(std::string num, int sys) { //проверка принадлежности числа своей СС
-	for (int i = 0; i < num.length(); i++) {
-		if (alfabet_[num[i]] >= sys) return false;
-	}
-	return true;
+bool Pair_check(std::string num, int sys) { //проверка принадлежности числа своей СС
+    for (int i = 0; i < num.length(); i++) {
+        if (alfabet_[num[i]] >= sys) return false;
+    }
+    return true;
 }
 
-bool Date_check(std::pair<std::string, std::vector<int>> tmp) { //проверка введенной даты на корректность
-	return !(tmp.second[5] > 59 || tmp.second[4] > 59 || tmp.second[3] > 23 || tmp.second[2] > 6 || tmp.second[1] > 52 || tmp.second[5] < 0 || tmp.second[4] < 0 || tmp.second[3]<0 || tmp.second[2]<0 || tmp.second[1]<0 || tmp.second[0]<0);
-}
-std::pair<std::string, std::vector<int>> plus(std::pair<std::string, std::vector<int>> f, std::pair<std::string, std::vector<int>> s); //Объявление функций заранее, тк они взаимозависимые
-std::pair<std::string, std::vector<int>> minus(std::pair<std::string, std::vector<int>> f, std::pair<std::string, std::vector<int>> s);
-
-std::pair<std::string, std::vector<int>> plus(std::pair<std::string, std::vector<int>> f, std::pair<std::string, std::vector<int>> s) { //Определение функций
-	if (f.first == "-" && s.first != "-") {
-		f.first = " ";
-		return minus(s,f);
-	}
-	if (s.first == "-" && f.first != "-") {
-		s.first = " ";
-		return minus(f, s);
-	}
-	for (int i = 0; i < 6; i++) {
-		f.second[i] += s.second[i];
-	}
-	f.second[4] += f.second[5] / 60;
-	f.second[5] %= 60;
-	
-	f.second[3] += f.second[4] / 60;
-	f.second[4] %= 60;
-
-	f.second[2] += f.second[3] / 24;
-	f.second[3] %= 24;
-
-	f.second[1] += f.second[2] / 7;
-	f.second[2] %= 7;
-
-	f.second[0] += f.second[1] / 365;
-	f.second[1] %= 365;
-	
-	if (f.first == "-") return std::make_pair("-", f.second);
-	return std::make_pair(" ", f.second);
+bool Num_input_check(std::string num) {
+    return !(num.length() == 0 || (num[0] == '0' && num.length() > 1));
 }
 
-std::pair<std::string, std::vector<int>> minus(std::pair<std::string, std::vector<int>> f, std::pair<std::string, std::vector<int>> s) {
-	if (f.first == "-" && s.first != "-") {
-		s.first = "-";
-		return plus(s, f);
-	}
-	if (s.first == "-" && f.first != "-") {
-		s.first = " ";
-		return plus(f, s);
-	}
-	if (f.first == "-" && s.first == "-") {
-		std::swap(f, s);
-	}
-	if (f.second[5] < s.second[5]) {
-		f.second[4]--;
-		f.second[5] += 60;
-	}
-	if (f.second[4] < s.second[4]) {
-		f.second[3]--;
-		f.second[4] += 60;
-	}
-	if (f.second[3] < s.second[3]) {
-		f.second[2]--;
-		f.second[5] += 24;
-	}
-	if (f.second[2] < s.second[2]) {
-		f.second[1]--;
-		f.second[2] += 7;
-	}
-	if (f.second[1] < s.second[1]) {
-		f.second[0]--;
-		f.second[1] += 365;
-	}
-	for (int i = 0; i < 6; i++){
-		f.second[i] -= s.second[i];
-	}
-	if (f.second[0] < 0) {
-		f.second[0] = std::abs(f.second[0]);
-		return std::make_pair("-", f.second);
-	}
-	return std::make_pair(" ", f.second);
+bool Sys_input_check(std::string sys) {
+    return To_dec(sys, 10) <= 16 && Num_input_check(sys);
+}
+bool Division_check(int num) {
+    return num != 0;
 }
 
-
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     setDefaultSettings();
-    ui->textEdit->setStyleSheet("background-color:#FFFFFF");
 }
 
 MainWindow::~MainWindow() {
@@ -174,54 +104,59 @@ bool rightMoveBlocked = false;
 bool leftMoveBlocked = true;
 QString mainWindowColor = "background-color: #000000";
 QString signColorOff = "border-radius: 20px;"
-    "background-color: #F29C07 ;"
-    "color: #FEFEFE;"
-    "text-align: centre;"
-    "border: none;"; 
+"background-color: #F29C07 ;"
+"color: #FEFEFE;"
+"text-align: centre;"
+"border: none;";
 QString signColorOn = "border-radius: 20px;"
-    "background-color:#FEFEFE ;"
-    "color: #F29C07;"
-    "border: none;"; 
+"background-color:#FEFEFE ;"
+"color: #F29C07;"
+"border: none;";
 QString signColorPressed = "border-radius: 20px;"
-    "background-color:#FBC98E ;"
-    "color: #FEFFFE;"
-    "border: none;"; 
+"background-color:#FBC98E ;"
+"color: #FEFFFE;"
+"border: none;";
 QString numColorPressed = "border-radius: 20px;"
-    "background-color: #737373;"
-    "color: #FEFEFE;"
-    "border: none;"; 
+"background-color: #737373;"
+"color: #FEFEFE;"
+"border: none;";
 QString numColorOff = "border-radius: 20px;"
-    "background-color: #333333;"
-    // "background-color: #6E6C6F;"
-    "color: #FEFEFE;"
-    "border: none;"; 
+"background-color: #333333;"
+// "background-color: #6E6C6F;"
+"color: #FEFEFE;"
+"border: none;";
 QString numColorBlocked = "border-radius: 20px;"
-    "background-color: #000000;"
-    "color: #6E6C6F;"
-    "border: 2px solid #6E6C6F;"; 
+"background-color: #000000;"
+"color: #6E6C6F;"
+"border: 2px solid #6E6C6F;";
 QString operationColorOff = "border-radius: 20px;"
-    "background-color: #A5A5A5;"
-    "color: #000000;"
-    "border: none;"; 
+"background-color: #A5A5A5;"
+"color: #000000;"
+"border: none;";
 QString operationColorBlocked = "border-radius: 20px;"
-    "border: 2px solid #A5A5A5;"
-    "background-color: #000000;"
-    "color: #A5A5A5;";
+"border: 2px solid #A5A5A5;"
+"background-color: #000000;"
+"color: #A5A5A5;";
 QString operationColorPressed = "border-radius: 20px;"
-    "background-color: #D9D9D9;"
-    "color: #000000;"
-    "border: none;"; 
+"background-color: #D9D9D9;"
+"color: #000000;"
+"border: none;";
 QString outputColor = "border-radius: 5px;"
-    "background-color: #333333;"
-    "color: #FFFFFF;"
-    "border-style: outset;";
+"background-color: #333333;"
+"color: #FFFFFF;"
+"border-style: outset;";
 QString outputColorActive = "border-radius: 5px;"
-    "background-color: #333333;"
-    "color: #FFFFFF;"
-    "border: 2px solid white;"
-    "border-style: outset;";
+"background-color: #333333;"
+"color: #FFFFFF;"
+"border: 2px solid white;"
+"border-style: outset;";
 QString signColor = "background-color: #000000;"
-"color: #FFFFFF;";
+"color: #FFFFFF;"
+"border: 2px solid black;";
+QString outputColorError = "border-radius: 5px;"
+"background-color: #333333;"
+"color: #FFFFFF;"
+"border: 2px solid #FF0000;";
 
 void MainWindow::setDefaultSettings() {
     vec.clear();
@@ -235,7 +170,6 @@ void MainWindow::setDefaultSettings() {
     setSignStyle();
     setNumStyle();
     setOutputStyle();
-
     ui->label_Sign->setStyleSheet(signColor);
     ui->plainTextEdit_Answer->setStyleSheet(outputColor);
     ui->label->setStyleSheet("color: #FFFFFF;");
@@ -292,6 +226,7 @@ void MainWindow::setSignStyle() {
     ui->pushButton_Sub->setStyleSheet(signColorOff);
     ui->pushButton_Sum->setStyleSheet(signColorOff);
     ui->pushButton_Equal->setStyleSheet(signColorOff);
+    ui->label_Sign->setStyleSheet(signColor);
 }
 
 void MainWindow::blockLeft() {
@@ -309,6 +244,35 @@ void MainWindow::unblockLeft() {
 void MainWindow::unblockRight() {
     ui->pushButton_Right->setEnabled(true);
     ui->pushButton_Right->setStyleSheet(operationColorOff);
+}
+
+void MainWindow::on_plainTextEdit_Num1_selectionChanged() {
+    currentVecIndex = 0;
+    currentPlainText = vec[currentVecIndex];
+    setOutputStyle();
+    currentPlainText->setStyleSheet(outputColorActive);
+    setArrowsStatus();
+}
+void MainWindow::on_plainTextEdit_Num2_selectionChanged() {
+    currentVecIndex = 2;
+    currentPlainText = vec[currentVecIndex];
+    setOutputStyle();
+    currentPlainText->setStyleSheet(outputColorActive);
+    setArrowsStatus();
+}
+void MainWindow::on_plainTextEdit_System1_selectionChanged() {
+    currentVecIndex = 1;
+    currentPlainText = vec[currentVecIndex];
+    setOutputStyle();
+    currentPlainText->setStyleSheet(outputColorActive);
+    setArrowsStatus();
+}
+void MainWindow::on_plainTextEdit_System2_selectionChanged() {
+    currentVecIndex = 3;
+    currentPlainText = vec[currentVecIndex];
+    setOutputStyle();
+    currentPlainText->setStyleSheet(outputColorActive);
+    setArrowsStatus();
 }
 
 void MainWindow::blockLetters() {
@@ -374,7 +338,7 @@ void MainWindow::setArrowsStatus() {
         leftMoveBlocked = false;
         rightMoveBlocked = true;
         break;
-    
+
     default:
         break;
     }
@@ -419,11 +383,12 @@ void MainWindow::on_pushButton_ClearAll_clicked() {
     ui->plainTextEdit_System2->setPlainText("");
     ui->label_Sign->setText("");
     ui->plainTextEdit_Answer->setPlainText("");
+    currentSign = "";
     setDefaultSettings();
 };
 void MainWindow::on_pushButton_Right_clicked() {
     currentVecIndex++;
-    setArrowsStatus();
+    setArrowsStatus();    
 }
 void MainWindow::on_pushButton_Left_clicked() {
     currentVecIndex--;
@@ -432,7 +397,7 @@ void MainWindow::on_pushButton_Left_clicked() {
 void MainWindow::on_pushButton_Delete_clicked() {
     QString text = currentPlainText->toPlainText();
     text.resize(text.size() - 1);
-    currentPlainText->setPlainText(text);   
+    currentPlainText->setPlainText(text);
     setNumStyle();
 }
 
@@ -474,19 +439,27 @@ void MainWindow::on_pushButton_Sub_clicked() {
 };
 void MainWindow::on_pushButton_Equal_clicked() {
     setSignStyle();
+    setOutputStyle();
+    QString num1 = ui->plainTextEdit_Num1->toPlainText(), num2 = ui->plainTextEdit_Num2->toPlainText(),
+        system1 = ui->plainTextEdit_System1->toPlainText(), system2 = ui->plainTextEdit_System2->toPlainText();
 
-    num1 = ui->plainTextEdit_Num1->toPlainText().toStdString();
-    num2 = ui->plainTextEdit_Num2->toPlainText().toStdString();
-    system1 = ui->plainTextEdit_System1->toPlainText().toInt();
-    system2 = ui->plainTextEdit_System2->toPlainText().toInt();
-
-    std::string sign = currentSign.toStdString();
-
-    long long num1Dec = To_dec(num1, system1);
-    long long num2Dec = To_dec(num2, system2);
-
-    Answer(num1Dec, num2Dec, sign);
-    ui->plainTextEdit_Answer->setPlainText(answer_);
+    if (!Num_input_check(num1.toStdString())) ui->plainTextEdit_Num1->setStyleSheet(outputColorError);
+    else if (!Num_input_check(num2.toStdString())) ui->plainTextEdit_Num2->setStyleSheet(outputColorError);
+    else if (!Sys_input_check(system1.toStdString())) ui->plainTextEdit_System1->setStyleSheet(outputColorError);
+    else if(!Sys_input_check(system2.toStdString())) ui->plainTextEdit_System2->setStyleSheet(outputColorError);
+    else if (!Pair_check(num1.toStdString(), system1.toInt())) {
+        ui->plainTextEdit_Num1->setStyleSheet(outputColorError);
+        ui->plainTextEdit_System1->setStyleSheet(outputColorError); 
+    } else if(!Pair_check(num2.toStdString(), system2.toInt())) {
+        ui->plainTextEdit_Num2->setStyleSheet(outputColorError);
+        ui->plainTextEdit_System2->setStyleSheet(outputColorError);
+    } else if (currentSign == "÷" && !Division_check(num2.toInt()) || currentSign == "") {
+        ui->label_Sign->setStyleSheet(outputColorError);
+    } else {
+        setOutputStyle();
+        Answer(To_dec(num1.toStdString(), system1.toInt()), To_dec(num2.toStdString(), system2.toInt()), currentSign.toStdString());
+        ui->plainTextEdit_Answer->setPlainText(answer_);
+    }
 };
 
 void MainWindow::on_pushButton_0_clicked() {
